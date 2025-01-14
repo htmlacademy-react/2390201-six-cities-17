@@ -1,21 +1,18 @@
 import Header from '../../components/header/header';
-import Tabs from '../../components/tabs/tabs';
+import LocationsList from '../../components/locations-list/locations-list';
 import Map from '../../components/map/map';
-import { Offers } from '../../types/offer';
 import OffersList from '../../components/offers-list/offers-list';
-import { AMSTERDAM_CITY_NAME } from '../../components/const/const';
+import { useAppSelector } from '../../hooks';
 
-type MainProps = {
-  // rentOffersNumber: number;
-  offers: Offers;
-}
+function Main (): JSX.Element {
+  const storeOffers = useAppSelector((state) => state.offers);
+  const storeSelectedCity = useAppSelector((state) => state.city);
+  const cityStoreOffers = storeOffers.filter((offer) => offer.city.name === storeSelectedCity);
 
-function Main ({offers}: MainProps): JSX.Element {
-  let offersToShow = offers.filter((offer) => offer.city.name === AMSTERDAM_CITY_NAME);
-  if (offersToShow.length === 0) {
-    offersToShow = offers;
-  }
-  const firstOffer = offersToShow[0];
+  // if (cityStoreOffers.length === 0) {
+  //   cityStoreOffers = storeOffers;
+  // }
+  const firstOffer = cityStoreOffers[0];
 
   return (
     <div className="page page--gray page--main">
@@ -23,12 +20,14 @@ function Main ({offers}: MainProps): JSX.Element {
 
       <main className="page__main page__main--index">
         <h1 className="visually-hidden">Cities</h1>
-        <Tabs/>
+        <LocationsList
+          selectedCity={storeSelectedCity}
+        />
         <div className="cities">
           <div className="cities__places-container container">
             <section className="cities__places places">
               <h2 className="visually-hidden">Places</h2>
-              <b className="places__found">{offersToShow.length} places to stay in Amsterdam</b>
+              <b className="places__found">{cityStoreOffers.length} places to stay in {storeSelectedCity}</b>
               <form className="places__sorting" action="#" method="get">
                 <span className="places__sorting-caption">Sort by</span>
                 <span className="places__sorting-type" tabIndex={0}>
@@ -46,8 +45,8 @@ function Main ({offers}: MainProps): JSX.Element {
               </form>
               <div className="cities__places-list places__list tabs__content">
                 <OffersList
-                  offers={offersToShow}
-                  shownOffersNumber={offersToShow.length}
+                  offers={cityStoreOffers}
+                  shownOffersNumber={cityStoreOffers.length}
                   showFavorites={false}
                 />
               </div>
@@ -55,7 +54,7 @@ function Main ({offers}: MainProps): JSX.Element {
             <div className="cities__right-section">
               <Map
                 city={firstOffer.city}
-                offersOnMap={offersToShow}
+                offersOnMap={cityStoreOffers}
                 selectedOffer={firstOffer}
               />
             </div>

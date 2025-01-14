@@ -1,18 +1,23 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import {Provider} from 'react-redux';
 import App from './components/app/app';
-// import { Setting } from './components/const/const';
 import { offers } from './mocks/offers';
+import {store} from './store';
+import { fillOffersList } from './store/action';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 
+store.dispatch(fillOffersList(offers));
+
 root.render(
   <React.StrictMode>
-    <App
-      // rentOffersNumber = {Setting.RENT_OFFERS_NUMBER}
-      offers = {offers}
-    />
+    <Provider store = {store}>
+      <App
+        offers = {offers}
+      />
+    </Provider>
   </React.StrictMode>
 );
